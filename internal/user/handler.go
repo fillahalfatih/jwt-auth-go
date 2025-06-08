@@ -1,58 +1,42 @@
+// internal/user/handler.go
 package user
 
 import (
-	"jwt-auth-go/config"
-	"jwt-auth-go/internal/model"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
+    "net/http"
+    "github.com/gin-gonic/gin"
 )
 
-func RegisterHandler(c *gin.Context) {
-	// get the request body
-	// and bind it to the struct
-	var registerRequest struct {
-		Email    string
-		Password string
-	}
+// Handler sekarang butuh service
+type Handler struct {
+    service Service
+}
 
-	err := c.ShouldBindJSON(&registerRequest)
+// Constructor untuk handler
+func NewHandler(service Service) *Handler {
+    return &Handler{service: service}
+}
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid input",
-		})
+// Jadikan RegisterHandler sebagai method dari struct Handler
+func (h *Handler) RegisterHandler(c *gin.Context) {
+    var registerRequest struct {
+        Email    string `json:"email"`
+        Password string `json:"password"`
+    }
 
-		return
-	}
+    // 1. Bind request
+    if err := c.ShouldBindJSON(&registerRequest); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+        return
+    }
 
-	// Hash the password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(registerRequest.Password), bcrypt.DefaultCost)
+    // 2. Panggil service (logika bisnis dipindahkan ke service)
+    _, err := h.service.RegisterUser(registerRequest.Email, registerRequest.Password)
+    if err != nil {
+        // Di sini bisa diperiksa jenis errornya, misal email sudah ada, dll.
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+        return
+    }
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to hash password",
-		})
-		return
-	}
-
-	// Create the user in the database
-	user := model.User{
-		Email:    registerRequest.Email,
-		Password: string(hashedPassword),
-	}
-
-	err = config.DB.Create(&user).Error
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to create user",
-		})
-		return
-	}
-
-	// respond with success
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User registered successfully",
-	})
+    // 3. Beri response
+    c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 }

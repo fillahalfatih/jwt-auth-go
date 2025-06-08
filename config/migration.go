@@ -2,17 +2,10 @@ package config
 
 import (
 	"log"
-	"jwt-auth-go/internal/model"
+	"gorm.io/gorm"
 )
 
-func Migrate() {
-	err := DB.AutoMigrate(
-		&model.User{},
-	)
-	
-	if err != nil {
-		log.Fatal("Failed to migrate database: ", err)
-	}
-
+func Migrate(db *gorm.DB, models ...interface{}) error {
 	log.Println("Database migration completed successfully!")
+	return db.AutoMigrate(models...)
 }
