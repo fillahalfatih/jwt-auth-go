@@ -1,9 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"jwt-auth-go/config"
+	"jwt-auth-go/routes"
+	"log"
 )
 
+func init() {
+	config.ConnectDB()
+	config.Migrate()
+}
+
 func main() {
-	fmt.Println("Hello Go")
+	router := routes.SetupRoutes()
+	log.Fatal(router.Run(":8080"))
 }
