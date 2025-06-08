@@ -2,8 +2,12 @@
 package user
 
 import (
-    "net/http"
-    "github.com/gin-gonic/gin"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // Handler sekarang butuh service
@@ -24,7 +28,7 @@ func (h *Handler) RegisterHandler(c *gin.Context) {
     }
 
     // 1. Bind request
-    if err := c.ShouldBindJSON(&registerRequest); err != nil {
+    if c.ShouldBindJSON(&registerRequest) != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
         return
     }
@@ -39,4 +43,41 @@ func (h *Handler) RegisterHandler(c *gin.Context) {
 
     // 3. Beri response
     c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
+}
+
+func (h *Handler) LoginHandler(c *gin.Context) {
+    var loginRequest struct {
+        Email    string `json:"email"`
+        Password string `json:"password"`
+    }
+
+    // 1. Bind request
+    if c.ShouldBindJSON(&loginRequest) != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+        return
+    }
+
+    // 2. Panggil service untuk melakukan semua logika login
+    user, err := h.service.LoginUser(loginRequest.Email, loginRequest.Password)
+    if err != nil {
+        // Service akan mengembalikan error jika user tidak ditemukan atau password salah
+        c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+        return
+    }
+
+    // 3. Generate JWT token jika login berhasil
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+        "sub":  user.ID,
+        "exp": time.Now().Add(time.Hour * 24).Unix(),
+    })
+
+    // 4. Sign token
+    tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+        return
+    }
+
+    // 5. Beri response
+    c.JSON(http.StatusOK, gin.H{"token": tokenString})
 }

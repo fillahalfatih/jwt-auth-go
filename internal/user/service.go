@@ -1,11 +1,16 @@
 // internal/user/service.go
 package user
 
-import "golang.org/x/crypto/bcrypt"
+import (
+    "errors"
+    "gorm.io/gorm"
+    "golang.org/x/crypto/bcrypt"
+)
 
 // Interface untuk service
 type Service interface {
     RegisterUser(email, password string) (*User, error)
+    LoginUser(email, password string) (*User, error)
 }
 
 type service struct {
@@ -38,4 +43,29 @@ func (s *service) RegisterUser(email, password string) (*User, error) {
     }
 
     return newUser, nil
+}
+
+// Logika bisnis untuk login
+func (s *service) LoginUser(email, password string) (*User, error) {
+    
+    // 1. Panggil repository untuk mencari user
+    user, err := s.repository.FindByEmail(email)
+    if err != nil {
+        // Jika error-nya adalah record tidak ditemukan, beri pesan yang jelas
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            return nil, errors.New("user not found")
+        }
+        // Untuk error database lainnya
+        return nil, err
+    }
+
+    // 2. Verifikasi password
+    err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+    if err != nil {
+        // Error ini biasanya berarti password salah
+        return nil, errors.New("invalid password")
+    }
+
+    // 3. Jika semua cocok, kembalikan user
+    return user, nil
 }
