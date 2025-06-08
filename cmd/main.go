@@ -3,6 +3,7 @@ package main
 
 import (
 	"jwt-auth-go/config"
+	"jwt-auth-go/middleware"
 	"jwt-auth-go/internal/user"
 	"jwt-auth-go/routes"
 	"log"
@@ -25,9 +26,11 @@ func main() {
 	userRepo := user.NewRepository(db)
 	userService := user.NewService(userRepo)
 	userHandler := user.NewHandler(userService)
+	authMiddleware := middleware.NewAuthMiddleware(userService)
 
 	allHandlers := &routes.Handlers{
-		UserHandler: userHandler,
+		UserHandler:    userHandler,
+		AuthMiddleware: authMiddleware,
 	}
 
 	// 4. Setup routes dengan memberikan handler

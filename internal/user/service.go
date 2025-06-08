@@ -11,6 +11,7 @@ import (
 type Service interface {
     RegisterUser(email, password string) (*User, error)
     LoginUser(email, password string) (*User, error)
+    FindUserByID(id uint) (*User, error)
 }
 
 type service struct {
@@ -67,5 +68,14 @@ func (s *service) LoginUser(email, password string) (*User, error) {
     }
 
     // 3. Jika semua cocok, kembalikan user
+    return user, nil
+}
+
+// Implementasi service FindUserByID
+func (s *service) FindUserByID(id uint) (*User, error) {
+    user, err := s.repository.FindByID(id)
+    if err != nil {
+        return nil, err
+    }
     return user, nil
 }

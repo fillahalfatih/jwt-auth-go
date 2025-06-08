@@ -79,5 +79,17 @@ func (h *Handler) LoginHandler(c *gin.Context) {
     }
 
     // 5. Beri response
-    c.JSON(http.StatusOK, gin.H{"token": tokenString})
+    c.SetSameSite(http.SameSiteLaxMode)
+    c.SetCookie("Authorization", tokenString, 3600*24, "", "", false, true)
+
+    c.JSON(http.StatusOK, gin.H{})
+}
+
+func (h *Handler) ValidateHandler(c *gin.Context) {
+    user, _ := c.Get("currentUser")
+
+    c.JSON(http.StatusOK, gin.H{
+        "message": "You are authenticated!",
+        "user":    user,
+    })
 }

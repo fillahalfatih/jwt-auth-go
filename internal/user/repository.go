@@ -9,6 +9,7 @@ import (
 type Repository interface {
     CreateUser(user *User) error
     FindByEmail(email string) (*User, error)
+    FindByID(id uint) (*User, error)
 }
 
 type repository struct {
@@ -31,6 +32,16 @@ func (r *repository) FindByEmail(email string) (*User, error) {
     err := r.db.First(&user, "email = ?", email).Error
     if err != nil {
         return nil, err // Akan mengembalikan error, misal gorm.ErrRecordNotFound jika tidak ada
+    }
+    return &user, nil
+}
+
+// Implementasi method FindByID
+func (r *repository) FindByID(id uint) (*User, error) {
+    var user User
+    err := r.db.First(&user, id).Error
+    if err != nil {
+        return nil, err
     }
     return &user, nil
 }
