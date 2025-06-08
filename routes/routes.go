@@ -2,24 +2,37 @@
 package routes
 
 import (
-    "jwt-auth-go/internal/user" // Impor user untuk mendapatkan struct Handler
+    "jwt-auth-go/internal/user"
     "github.com/gin-gonic/gin"
 )
 
-// Ubah signature fungsi ini untuk menerima user.Handler
-func SetupRoutes(userHandler *user.Handler) *gin.Engine {
+// Buat struct ini untuk menampung semua handler
+type Handlers struct {
+    UserHandler    *user.Handler
+    // Jika nanti ada ProductHandler, tambahkan di sini
+    // ProductHandler *product.Handler
+}
+
+// Ubah signature fungsi ini untuk menerima struct Handlers
+func SetupRoutes(handlers *Handlers) *gin.Engine {
     r := gin.Default()
 
     v1 := r.Group("/v1")
 
-    v1.GET("/", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "status": "ok",
-        })
-    })
-    
-    // Panggil handler sebagai method dari instance yang kita terima
-    v1.POST("/register", userHandler.RegisterHandler)
+    // --- User Routes ---
+    userRoutes := v1.Group("/users")
+    {
+        userRoutes.POST("/register", handlers.UserHandler.RegisterHandler)
+        // userRoutes.POST("/login", handlers.UserHandler.LoginHandler)
+    }
+
+    // --- Product Routes ---
+    // productRoutes := v1.Group("/products")
+    // {
+    //     // Contoh pemanggilan handler dari product
+    //     productRoutes.POST("/", handlers.ProductHandler.CreateProduct) 
+    //     productRoutes.GET("/", handlers.ProductHandler.GetAllProducts)
+    // }
 
     return r
 }

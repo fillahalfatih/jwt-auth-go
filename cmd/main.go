@@ -26,8 +26,12 @@ func main() {
 	userService := user.NewService(userRepo)
 	userHandler := user.NewHandler(userService)
 
+	allHandlers := &routes.Handlers{
+		UserHandler: userHandler,
+	}
+
 	// 4. Setup routes dengan memberikan handler
-	router := routes.SetupRoutes(userHandler)
+	router := routes.SetupRoutes(allHandlers)
 
 	log.Println("Starting server on port :8080")
 	log.Fatal(router.Run(":8080"))
