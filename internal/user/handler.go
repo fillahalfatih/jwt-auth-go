@@ -22,10 +22,7 @@ func NewHandler(service Service) *Handler {
 
 // Jadikan RegisterHandler sebagai method dari struct Handler
 func (h *Handler) RegisterHandler(c *gin.Context) {
-    var registerRequest struct {
-        Email    string `json:"email"`
-        Password string `json:"password"`
-    }
+    var registerRequest RegisterRequest
 
     // 1. Bind request
     if c.ShouldBindJSON(&registerRequest) != nil {
@@ -46,10 +43,8 @@ func (h *Handler) RegisterHandler(c *gin.Context) {
 }
 
 func (h *Handler) LoginHandler(c *gin.Context) {
-    var loginRequest struct {
-        Email    string `json:"email"`
-        Password string `json:"password"`
-    }
+
+    var loginRequest LoginRequest
 
     // 1. Bind request
     if c.ShouldBindJSON(&loginRequest) != nil {
