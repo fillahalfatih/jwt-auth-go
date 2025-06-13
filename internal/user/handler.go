@@ -3,21 +3,20 @@ package user
 
 import (
 	"net/http"
-	"os"
-	"time"
+    "jwt-auth-go/pkg/jwt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v4"
 )
 
 // Handler sekarang butuh service
 type Handler struct {
-    service Service
+	service   Service
+	jwtService jwt.Service
 }
 
 // Constructor untuk handler
-func NewHandler(service Service) *Handler {
-    return &Handler{service: service}
+func NewHandler(service Service, jwtService jwt.Service) *Handler {
+	return &Handler{service: service, jwtService: jwtService}
 }
 
 // Jadikan RegisterHandler sebagai method dari struct Handler
@@ -60,20 +59,14 @@ func (h *Handler) LoginHandler(c *gin.Context) {
         return
     }
 
-    // 3. Generate JWT token jika login berhasil
-    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-        "sub":  user.ID,
-        "exp": time.Now().Add(time.Hour * 24).Unix(),
-    })
+    // 3. Generate JWT token melalui JWT Service
+    tokenString, err := h.jwtService.GenerateToken(user.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
 
-    // 4. Sign token
-    tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
-        return
-    }
-
-    // 5. Beri response
+    // 4. Beri response
     c.SetSameSite(http.SameSiteLaxMode)
     c.SetCookie("Authorization", tokenString, 3600*24, "", "", false, true)
 

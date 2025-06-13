@@ -5,6 +5,7 @@ import (
 	"jwt-auth-go/config"
 	"jwt-auth-go/middleware"
 	"jwt-auth-go/internal/user"
+	"jwt-auth-go/pkg/jwt"
 	"jwt-auth-go/routes"
 	"log"
 )
@@ -23,11 +24,12 @@ func main() {
 	}
 
 	// 3. Buat semua instance (Dependency Injection)
+	jwtService := jwt.NewService()
 	userRepo := user.NewRepository(db)
 	userService := user.NewService(userRepo)
-	userHandler := user.NewHandler(userService)
+	userHandler := user.NewHandler(userService, jwtService)
 
-	authMiddleware := middleware.NewAuthMiddleware(userService)
+	authMiddleware := middleware.NewAuthMiddleware(userService, jwtService)
 
 	allHandlers := &routes.Handlers{
 		UserHandler:    userHandler,
