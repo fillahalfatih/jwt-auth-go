@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	// 1. Panggil fungsi yang benar
+	// 1. Panggil fungsi ConnectDB untuk mendapatkan koneksi database
 	db, err := config.ConnectDB()
 	if err != nil {
 		log.Fatal("Failed to connect to database: ", err)
@@ -26,6 +26,7 @@ func main() {
 	userRepo := user.NewRepository(db)
 	userService := user.NewService(userRepo)
 	userHandler := user.NewHandler(userService)
+
 	authMiddleware := middleware.NewAuthMiddleware(userService)
 
 	allHandlers := &routes.Handlers{

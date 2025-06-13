@@ -26,7 +26,7 @@ func SetupRoutes(handlers *Handlers) *gin.Engine {
     {
         userRoutes.POST("/register", handlers.UserHandler.RegisterHandler)
         userRoutes.POST("/login", handlers.UserHandler.LoginHandler)
-        userRoutes.GET("/validate", handlers.AuthMiddleware, handlers.UserHandler.ValidateHandler)        // userRoutes.POST("/login", handlers.UserHandler.LoginHandler)
+        userRoutes.GET("/validate", handlers.AuthMiddleware, handlers.UserHandler.ValidateHandler)
     }
 
     // --- Product Routes ---

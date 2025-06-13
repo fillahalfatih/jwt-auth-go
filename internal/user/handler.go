@@ -39,7 +39,7 @@ func (h *Handler) RegisterHandler(c *gin.Context) {
     }
 
     // 3. Beri response
-    c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
+    c.JSON(http.StatusCreated, RegisterResponse{Message: "User registered successfully"})
 }
 
 func (h *Handler) LoginHandler(c *gin.Context) {
@@ -77,7 +77,12 @@ func (h *Handler) LoginHandler(c *gin.Context) {
     c.SetSameSite(http.SameSiteLaxMode)
     c.SetCookie("Authorization", tokenString, 3600*24, "", "", false, true)
 
-    c.JSON(http.StatusOK, gin.H{})
+	response := LoginResponse{
+		Message: "Login successful",
+		Token:   tokenString,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func (h *Handler) ValidateHandler(c *gin.Context) {
