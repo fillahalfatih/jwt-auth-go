@@ -3,8 +3,9 @@ package main
 
 import (
 	"jwt-auth-go/config"
-	"jwt-auth-go/middleware"
+	"jwt-auth-go/internal/product"
 	"jwt-auth-go/internal/user"
+	"jwt-auth-go/middleware"
 	"jwt-auth-go/pkg/jwt"
 	"jwt-auth-go/routes"
 	"log"
@@ -18,7 +19,7 @@ func main() {
 	}
 
 	// 2. Jalankan migrasi
-	err = config.Migrate(db, &user.User{})
+	err = config.Migrate(db, &user.User{}, &product.Product{})
 	if err != nil {
 		log.Fatal("Failed to migrate database: ", err)
 	}
@@ -29,10 +30,15 @@ func main() {
 	userService := user.NewService(userRepo)
 	userHandler := user.NewHandler(userService, jwtService)
 
+	productRepo := product.NewRepository(db)
+	productService := product.NewService(productRepo)
+	productHandler := product.NewProductHandler(productService)
+
 	authMiddleware := middleware.NewAuthMiddleware(userService, jwtService)
 
 	allHandlers := &routes.Handlers{
 		UserHandler:    userHandler,
+		ProductHandler: productHandler,
 		AuthMiddleware: authMiddleware,
 	}
 

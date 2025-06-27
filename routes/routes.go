@@ -2,6 +2,7 @@
 package routes
 
 import (
+	"jwt-auth-go/internal/product"
 	"jwt-auth-go/internal/user"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ import (
 type Handlers struct {
     AuthMiddleware gin.HandlerFunc
     UserHandler    *user.Handler
+    ProductHandler *product.ProductHandler // Ganti dengan handler yang sesuai jika ada
     // Jika nanti ada ProductHandler, tambahkan di sini
     // ProductHandler *product.Handler
 }
@@ -30,12 +32,10 @@ func SetupRoutes(handlers *Handlers) *gin.Engine {
     }
 
     // --- Product Routes ---
-    // productRoutes := v1.Group("/products")
-    // {
-    //     // Contoh pemanggilan handler dari product
-    //     productRoutes.POST("/", handlers.ProductHandler.CreateProduct) 
-    //     productRoutes.GET("/", handlers.ProductHandler.GetAllProducts)
-    // }
+    productRoutes := v1.Group("/products")
+    {
+        productRoutes.GET("/", handlers.ProductHandler.GetProducts)
+    }
 
     return r
 }
