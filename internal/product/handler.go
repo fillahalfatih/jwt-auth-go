@@ -59,7 +59,7 @@ func (h *ProductHandler) GetProductByID(c *gin.Context) {
 	productResponse := convertToProductResponse(*p)
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Success get product by ID",
+		"message": "Success get product by ID:" + strconv.Itoa(productID),
 		"data": productResponse,
 	})
 }

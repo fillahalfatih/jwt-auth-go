@@ -35,7 +35,8 @@ func SetupRoutes(handlers *Handlers) *gin.Engine {
     productRoutes := v1.Group("/products")
     {
         productRoutes.GET("/", handlers.ProductHandler.GetProducts)
-        productRoutes.POST("/create", handlers.ProductHandler.PostProduct)
+        productRoutes.GET("/:id", handlers.ProductHandler.GetProductByID)
+        productRoutes.POST("/create", handlers.AuthMiddleware, handlers.ProductHandler.PostProduct)
     }
 
     return r

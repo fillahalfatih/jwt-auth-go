@@ -2,8 +2,8 @@
 package user
 
 import (
+	"jwt-auth-go/pkg/jwt"
 	"net/http"
-    "jwt-auth-go/pkg/jwt"
 
 	"github.com/gin-gonic/gin"
 )

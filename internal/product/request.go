@@ -23,3 +23,17 @@ Contoh data JSON untuk POST berdasarkan CreeateProductRequest:
 	"images": "https://example.com/images/butter-cookies.jpg"
 }
 */
+
+/*
+Contoh data JSON untuk POST berdasarkan CreeateProductRequest dengan kategori "Bread":
+
+{
+	"name": "Sourdough Bread",
+	"slug": "sourdough-bread",
+	"description": "Artisan sourdough bread with a crispy crust and tangy flavor.",
+	"price": 3.49,
+	"quantity": 50,
+	"category": "Bread",
+	"images": "https://example.com/images/sourdough-bread.jpg"
+}
+*/
