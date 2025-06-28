@@ -3,7 +3,8 @@ package product
 type Service interface {
 	GetAllProduct() ([]Product, error)
 	GetProductByID(id uint) (*Product, error)
-	AddNewProduct(product CreeateProductRequest) (*Product, error)
+	AddNewProduct(product CreateProductRequest) (*Product, error)
+	UpdateProduct(ID int, product UpdateProductRequest) (*Product, error)
 }
 
 type service struct {
@@ -27,10 +28,10 @@ func (s *service) GetProductByID(id uint) (*Product, error) {
     if err != nil {
         return nil, err
     }
-    return product, nil
+    return &product, nil
 }
 
-func (s *service) AddNewProduct(productRequest CreeateProductRequest) (*Product, error) {
+func (s *service) AddNewProduct(productRequest CreateProductRequest) (*Product, error) {
 	newProduct := Product{
 		Name:        productRequest.Name,
 		Slug:        productRequest.Slug,
@@ -41,10 +42,46 @@ func (s *service) AddNewProduct(productRequest CreeateProductRequest) (*Product,
 		Images:      productRequest.Images,
 	}
 
-	err := s.repository.CreateProduct(&newProduct)
+	product, err := s.repository.CreateProduct(newProduct)
 	if err != nil {
 		return nil, err
 	}
 
-	return &newProduct, nil
+	return &product, nil
+}
+
+func (s *service) UpdateProduct(ID int, productRequest UpdateProductRequest) (*Product, error) {
+	existingProduct, err := s.repository.FindByID(uint(ID))
+	if err != nil {
+		return nil, err
+	}
+
+	if productRequest.Name != nil {
+		existingProduct.Name = *productRequest.Name
+	}
+	if productRequest.Slug != nil {
+		existingProduct.Slug = *productRequest.Slug
+	}
+	if productRequest.Description != nil {
+		existingProduct.Description = *productRequest.Description
+	}
+	if productRequest.Price != nil {
+		existingProduct.Price = *productRequest.Price
+	}
+	if productRequest.Quantity != nil {
+		existingProduct.Quantity = *productRequest.Quantity
+	}
+	if productRequest.Category != nil {
+		existingProduct.Category = *productRequest.Category
+	}
+	if productRequest.Images != nil {
+		existingProduct.Images = *productRequest.Images
+	}
+
+	res, err := s.repository.UpdateProduct(existingProduct)
+	if err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }

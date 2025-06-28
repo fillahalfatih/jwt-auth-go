@@ -13,8 +13,6 @@ type Handlers struct {
     AuthMiddleware gin.HandlerFunc
     UserHandler    *user.Handler
     ProductHandler *product.ProductHandler // Ganti dengan handler yang sesuai jika ada
-    // Jika nanti ada ProductHandler, tambahkan di sini
-    // ProductHandler *product.Handler
 }
 
 // Ubah signature fungsi ini untuk menerima struct Handlers
@@ -30,13 +28,14 @@ func SetupRoutes(handlers *Handlers) *gin.Engine {
         userRoutes.POST("/login", handlers.UserHandler.LoginHandler)
         userRoutes.GET("/validate", handlers.AuthMiddleware, handlers.UserHandler.ValidateHandler)
     }
-
+    
     // --- Product Routes ---
     productRoutes := v1.Group("/products")
     {
-        productRoutes.GET("/", handlers.ProductHandler.GetProducts)
-        productRoutes.GET("/:id", handlers.ProductHandler.GetProductByID)
-        productRoutes.POST("/create", handlers.AuthMiddleware, handlers.ProductHandler.PostProduct)
+        productRoutes.GET("/", handlers.ProductHandler.GetAllProductsHandler)
+        productRoutes.GET("/:id", handlers.ProductHandler.GetProductByIDHandler)
+        productRoutes.POST("/create", handlers.AuthMiddleware, handlers.ProductHandler.CreateProductHandler)
+        productRoutes.PUT("/update/:id", handlers.AuthMiddleware, handlers.ProductHandler.UpdateProductHandler)
     }
 
     return r

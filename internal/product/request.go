@@ -1,13 +1,23 @@
 package product
 
-type CreeateProductRequest struct {
+type CreateProductRequest struct {
 	Name        string   `json:"name" binding:"required"`
-	Slug		string	`json:"slug" binding:"required"`
+	Slug		string	 `json:"slug" binding:"required"`
 	Description string   `json:"description" binding:"required"`
 	Price      	float64  `json:"price" binding:"required"`
-	Quantity   int      `json:"quantity" binding:"required"`
-	Category   string   `json:"category" binding:"required"`
-	Images     string `json:"images" binding:"required"`
+	Quantity    int      `json:"quantity" binding:"required"`
+	Category    string   `json:"category" binding:"required"`
+	Images      string   `json:"images" binding:"required"`
+}
+
+type UpdateProductRequest struct {
+	Name        *string   `json:"name"`
+	Slug		*string	  `json:"slug"`
+	Description *string   `json:"description"`
+	Price      	*float64  `json:"price"`
+	Quantity    *int      `json:"quantity"`
+	Category    *string   `json:"category"`
+	Images      *string   `json:"images"`
 }
 
 /*
