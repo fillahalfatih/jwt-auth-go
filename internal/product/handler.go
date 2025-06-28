@@ -2,7 +2,7 @@ package product
 
 import (
 	"net/http"
-
+	"strconv"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,21 +24,55 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 	}
 
 	var productResponses []GetProductResponse
-	for _, product := range products {
-		productResponses = append(productResponses, GetProductResponse{
-			ID:          product.ID,
-			Name:        product.Name,
-			Slug:        product.Slug,
-			Description: product.Description,
-			Price:       product.Price,
-			Quantity:    product.Quantity,
-			Category:    product.Category,
-			Images:      product.Images,
-		})
+
+	for _, p := range products {
+		productResponse := convertToBookResponse(p)
+		
+		productResponses = append(productResponses, productResponse)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Success get all products",
 		"products": productResponses,
 	})
+}
+
+func (h *ProductHandler) GetProductByID(c *gin.Context) {
+	id := c.Param("id")
+
+	productID, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid product ID",
+		})
+		return
+	}
+
+	p, err := h.productService.GetProductByID(uint(productID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	productResponse := convertToBookResponse(*p)
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": productResponse,
+	})
+}
+
+// PRODUCT RESPONSE
+func convertToBookResponse(p Product) GetProductResponse {
+	return GetProductResponse{
+		ID:          p.ID,
+		Name:        p.Name,
+		Slug:        p.Slug,
+		Description: p.Description,
+		Price:       p.Price,
+		Quantity:    p.Quantity,
+		Category:    p.Category,
+		Images:      p.Images,
+	}
 }
