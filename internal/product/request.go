@@ -9,3 +9,17 @@ type CreeateProductRequest struct {
 	Category   string   `json:"category" binding:"required"`
 	Images     string `json:"images" binding:"required"`
 }
+
+/*
+Contoh data JSON untuk POST berdasarkan CreeateProductRequest:
+
+{
+	"name": "Butter Cookies",
+	"slug": "butter-cookies",
+	"description": "Delicious homemade butter cookies with a rich, buttery flavor.",
+	"price": 5.99,
+	"quantity": 100,
+	"category": "Cookies",
+	"images": "https://example.com/images/butter-cookies.jpg"
+}
+*/

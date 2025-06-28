@@ -26,14 +26,14 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 	var productResponses []GetProductResponse
 
 	for _, p := range products {
-		productResponse := convertToBookResponse(p)
+		productResponse := convertToProductResponse(p)
 		
 		productResponses = append(productResponses, productResponse)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Success get all products",
-		"products": productResponses,
+		"data": productResponses,
 	})
 }
 
@@ -56,15 +56,42 @@ func (h *ProductHandler) GetProductByID(c *gin.Context) {
 		return
 	}
 
-	productResponse := convertToBookResponse(*p)
+	productResponse := convertToProductResponse(*p)
 
 	c.JSON(http.StatusOK, gin.H{
+		"message": "Success get product by ID",
 		"data": productResponse,
 	})
 }
 
+func (h *ProductHandler) PostProduct(c *gin.Context) {
+	var productRequest CreeateProductRequest
+
+	err := c.ShouldBindJSON(&productRequest)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors": err.Error(),
+		})
+		return
+	}
+
+	product, err := h.productService.AddNewProduct(productRequest)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Success create new product:" + product.Name,
+		"data": convertToProductResponse(*product),
+	})
+}
+
 // PRODUCT RESPONSE
-func convertToBookResponse(p Product) GetProductResponse {
+func convertToProductResponse(p Product) GetProductResponse {
 	return GetProductResponse{
 		ID:          p.ID,
 		Name:        p.Name,
