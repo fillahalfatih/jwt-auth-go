@@ -2,6 +2,7 @@ package product
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,7 +38,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "List of products",
+		"message": "Success get all products",
 		"products": productResponses,
 	})
 }
