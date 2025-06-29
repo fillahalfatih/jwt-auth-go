@@ -5,6 +5,7 @@ type Service interface {
 	GetProductByID(id uint) (*Product, error)
 	AddNewProduct(product CreateProductRequest) (*Product, error)
 	UpdateProduct(ID int, product UpdateProductRequest) (*Product, error)
+	DeleteProduct(ID int) (*Product, error)
 }
 
 type service struct {
@@ -84,4 +85,18 @@ func (s *service) UpdateProduct(ID int, productRequest UpdateProductRequest) (*P
 	}
 
 	return &res, nil
+}
+
+func (s *service) DeleteProduct(ID int) (*Product, error) {
+	product, err := s.repository.FindByID(uint(ID))
+	if err != nil {
+		return nil, err
+	}
+
+	deletedProduct, err := s.repository.DeleteProduct(product)
+	if err != nil {
+		return nil, err
+	}
+
+	return &deletedProduct, nil
 }

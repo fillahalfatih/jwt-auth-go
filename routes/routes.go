@@ -12,7 +12,7 @@ import (
 type Handlers struct {
     AuthMiddleware gin.HandlerFunc
     UserHandler    *user.Handler
-    ProductHandler *product.ProductHandler // Ganti dengan handler yang sesuai jika ada
+    ProductHandler *product.ProductHandler
 }
 
 // Ubah signature fungsi ini untuk menerima struct Handlers
@@ -36,6 +36,7 @@ func SetupRoutes(handlers *Handlers) *gin.Engine {
         productRoutes.GET("/:id", handlers.ProductHandler.GetProductByIDHandler)
         productRoutes.POST("/create", handlers.AuthMiddleware, handlers.ProductHandler.CreateProductHandler)
         productRoutes.PUT("/update/:id", handlers.AuthMiddleware, handlers.ProductHandler.UpdateProductHandler)
+        productRoutes.DELETE("/delete/:id", handlers.AuthMiddleware, handlers.ProductHandler.DeleteProductHandler)
     }
 
     return r

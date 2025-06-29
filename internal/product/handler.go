@@ -125,6 +125,30 @@ func (h *ProductHandler) UpdateProductHandler(c *gin.Context) {
 	})
 }
 
+func (h *ProductHandler) DeleteProductHandler(c *gin.Context) {
+	id := c.Param("id")
+	productID, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid product ID",
+		})
+		return
+	}
+
+	product, err := h.productService.DeleteProduct(productID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Success delete product with ID:" + strconv.Itoa(productID),
+		"data": convertToProductResponse(*product),
+	})
+}
+
 // PRODUCT RESPONSE
 func convertToProductResponse(p Product) GetProductResponse {
 	return GetProductResponse{
