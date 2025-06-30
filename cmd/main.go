@@ -18,11 +18,12 @@ func main() {
 		log.Fatal("Failed to connect to database: ", err)
 	}
 
-	// db.Exec("SET FOREIGN_KEY_CHECKS = 0")
-	// db.Exec("TRUNCATE TABLE products")
-	// db.Exec("TRUNCATE TABLE categories")
-	// db.Exec("SET FOREIGN_KEY_CHECKS = 1")
-	// db.Exec("DROP TABLE products")
+	db.Exec("SET FOREIGN_KEY_CHECKS = 0")
+	db.Exec("TRUNCATE TABLE products")
+	db.Exec("TRUNCATE TABLE categories")
+	db.Exec("SET FOREIGN_KEY_CHECKS = 1")
+	db.Exec("DROP TABLE products")
+	db.Exec("DROP TABLE categories")
 
 	db.Exec("INSERT INTO categories (name, created_at, updated_at) VALUES (?, NOW(), NOW()), (?, NOW(), NOW()), (?, NOW(), NOW())", "Donut", "cookies", "Bakery")
 
@@ -31,6 +32,9 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to migrate database: ", err)
 	}
+
+	config.SeedCategories(db)
+	config.SeedProducts(db)
 
 	// 3. Buat semua instance (Dependency Injection)
 	jwtService := jwt.NewService()
