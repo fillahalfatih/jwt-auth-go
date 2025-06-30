@@ -51,7 +51,7 @@ func (r *repository) CreateProduct(product Product) (Product, error) {
 
 	err = r.db.Preload("Category").First(&product, product.ID).Error
 	if err != nil {
-		return product, err
+		return Product{}, err
 	}
 
 	return product, nil
@@ -59,6 +59,11 @@ func (r *repository) CreateProduct(product Product) (Product, error) {
 
 func (r *repository) UpdateProduct(product Product) (Product, error) {
     err := r.db.Save(&product).Error
+	if err != nil {
+		return Product{}, err
+	}
+
+	err = r.db.Preload("Category").First(&product, product.ID).Error
 	if err != nil {
 		return Product{}, err
 	}
