@@ -18,8 +18,16 @@ func main() {
 		log.Fatal("Failed to connect to database: ", err)
 	}
 
+	// db.Exec("SET FOREIGN_KEY_CHECKS = 0")
+	// db.Exec("TRUNCATE TABLE products")
+	// db.Exec("TRUNCATE TABLE categories")
+	// db.Exec("SET FOREIGN_KEY_CHECKS = 1")
+	// db.Exec("DROP TABLE products")
+
+	db.Exec("INSERT INTO categories (name, created_at, updated_at) VALUES (?, NOW(), NOW()), (?, NOW(), NOW()), (?, NOW(), NOW())", "Donut", "cookies", "Bakery")
+
 	// 2. Jalankan migrasi
-	err = config.Migrate(db, &user.User{}, &product.Product{})
+	err = config.Migrate(db, &product.Category{}, &product.Product{}, &user.User{})
 	if err != nil {
 		log.Fatal("Failed to migrate database: ", err)
 	}

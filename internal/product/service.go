@@ -39,7 +39,7 @@ func (s *service) AddNewProduct(productRequest CreateProductRequest) (*Product, 
 		Description: productRequest.Description,
 		Price:       productRequest.Price,
 		Quantity:    productRequest.Quantity,
-		Category:    productRequest.Category,
+		CategoryID:    productRequest.CategoryID,
 		Images:      productRequest.Images,
 	}
 
@@ -72,8 +72,8 @@ func (s *service) UpdateProduct(ID int, productRequest UpdateProductRequest) (*P
 	if productRequest.Quantity != nil {
 		existingProduct.Quantity = *productRequest.Quantity
 	}
-	if productRequest.Category != nil {
-		existingProduct.Category = *productRequest.Category
+	if productRequest.CategoryID != nil {
+		existingProduct.CategoryID = *productRequest.CategoryID
 	}
 	if productRequest.Images != nil {
 		existingProduct.Images = *productRequest.Images

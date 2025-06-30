@@ -6,7 +6,7 @@ type CreateProductRequest struct {
 	Description string   `json:"description" binding:"required"`
 	Price      	float64  `json:"price" binding:"required"`
 	Quantity    int      `json:"quantity" binding:"required"`
-	Category    string   `json:"category" binding:"required"`
+	CategoryID    uint   `json:"category_id" binding:"required"`
 	Images      string   `json:"images" binding:"required"`
 }
 
@@ -16,7 +16,7 @@ type UpdateProductRequest struct {
 	Description *string   `json:"description"`
 	Price      	*float64  `json:"price"`
 	Quantity    *int      `json:"quantity"`
-	Category    *string   `json:"category"`
+	CategoryID    *uint   `json:"category_id"`
 	Images      *string   `json:"images"`
 }
 

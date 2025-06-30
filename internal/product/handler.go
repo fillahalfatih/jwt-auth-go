@@ -158,7 +158,7 @@ func convertToProductResponse(p Product) GetProductResponse {
 		Description: p.Description,
 		Price:       p.Price,
 		Quantity:    p.Quantity,
-		Category:    p.Category,
 		Images:      p.Images,
+		Category:    CategoryResponse{ID: p.Category.ID, Name: p.Category.Name},
 	}
 }

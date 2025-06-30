@@ -22,11 +22,11 @@ func NewRepository(db *gorm.DB) Repository {
 
 func (r *repository) FindAll() ([]Product, error) {
 	var products []Product
-	err := r.db.Find(&products).Error
+	err := r.db.Preload("Category").Find(&products).Error
 	if err != nil {
-		return nil, err // Akan mengembalikan error, misal gorm.ErrRecordNotFound jika tidak ada
+		return nil, err
 	}
-	return products, nil
+	return products, err
 }
 
 func (r *repository) FindByID(id uint) (Product, error) {
@@ -43,6 +43,12 @@ func (r *repository) CreateProduct(product Product) (Product, error) {
 	if err != nil {
 		return Product{}, err
 	}
+
+	err = r.db.Preload("Category").First(&product, product.ID).Error
+	if err != nil {
+		return product, err
+	}
+	
 	return product, nil
 }
 
