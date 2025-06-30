@@ -35,6 +35,11 @@ func (r *repository) FindByID(id uint) (Product, error) {
 	if err != nil {
 		return Product{}, err
 	}
+
+	err = r.db.Preload("Category").First(&product, id).Error
+	if err != nil {
+		return Product{}, err
+	}
 	return product, nil
 }
 
@@ -48,7 +53,7 @@ func (r *repository) CreateProduct(product Product) (Product, error) {
 	if err != nil {
 		return product, err
 	}
-	
+
 	return product, nil
 }
 
