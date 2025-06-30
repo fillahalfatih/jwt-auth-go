@@ -71,7 +71,10 @@ func (r *repository) UpdateProduct(product Product) (Product, error) {
 }
 
 func (r *repository) DeleteProduct(product Product) (Product, error) {
-	err := r.db.Delete(&product).Error
+	// err := r.db.Delete(&product).Error
+
+	// Using Unscoped to allow deletion of soft-deleted records
+	err := r.db.Unscoped().Delete(&product).Error
 	if err != nil {
 		return Product{}, err
 	}
